@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuentro U5 y U7 - Unión de Sunchales</title>
+  <style>
+    :root {
+      --green: #008f3c;
+      --green-dark: #06652d;
+      --bg: #f4f7f5;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #dbe4dc;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 20px 14px 32px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      color: white;
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filter-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .filter-box label {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cfd8d1;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .summary {
+      margin: 4px 2px 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .matches {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .match-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: #edf7f0;
+      color: var(--green-dark);
+      border: 1px solid #cce8d4;
+    }
+
+    .time {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .teams {
+      display: grid;
+      gap: 10px;
+    }
+
+    .team {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      background: #fbfcfb;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .vs {
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin: -2px 0;
+    }
+
+    .empty {
+      background: white;
+      border: 1px dashed #cfd8d1;
+      border-radius: var(--radius);
+      padding: 22px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 640px) {
+      .filters {
+        grid-template-columns: 1fr;
+      }
+
+      .wrap {
+        padding: 14px 10px 28px;
+      }
+
+      .hero {
+        border-radius: 20px;
+        padding: 18px 14px;
+      }
+
+      .match-card {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Encuentro U5 y U7 - Unión de Sunchales</h1>
+    </section>
+
+    <section class="filters">
+      <div class="filter-box">
+        <label for="categoryFilter">Categoría</label>
+        <select id="categoryFilter">
+          <option value="">Todas</option>
+          <option value="U5">U5</option>
+          <option value="U7">U7</option>
+        </select>
+      </div>
+
+      <div class="filter-box">
+        <label for="teamFilter">Equipo</label>
+        <select id="teamFilter">
+          <option value="">Todos</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="summary" id="summary"></div>
+    <section class="matches" id="matches"></section>
+  </div>
+
+  <script>
+    const teams = [
+      '9 DE JULIO RAFAELA',
+      'ARGENTINO HUMBERTO',
+      'ATLETICO PILAR',
+      'ATLETICO RAFAELA',
+      'BEN HUR RAFAELA',
+      'DEPORTIVO TACURAL',
+      'INDEPENDIENTE ATALIVA',
+      'INDEPENDIENTE RAFAELA',
+      'LIBERTAD FEMENINO',
+      'LIBERTAD MASCULINO',
+      'PEÑAROL RAFAELA',
+      'QUILMES RAFAELA',
+      'RACING S. C.',
+      'TIRO FEDERAL MOISES VILLE',
+      'UNION FEMENINO',
+      'UNION MASCULINO BLANCO',
+      'UNION MASCULINO VERDE'
+    ];
+
+    const matches = [
+      { categoria: 'U5', cancha: '4', hora: '10:00', equipo1: 'TIRO FEDERAL MOISES VILLE', equipo2: 'UNION MASCULINO BLANCO' },
+      { categoria: 'U5', cancha: '4', hora: '10:30', equipo1: 'LIBERTAD MASCULINO', equipo2: 'BEN HUR RAFAELA' },
+      { categoria: 'U5', cancha: '4', hora: '11:00', equipo1: 'INDEPENDIENTE ATALIVA', equipo2: 'LIBERTAD FEMENINO' },
+      { categoria: 'U5', cancha: '4', hora: '11:30', equipo1: 'TIRO FEDERAL MOISES VILLE', equipo2: 'BEN HUR RAFAELA' },
+      { categoria: 'U5', cancha: '4', hora: '12:00', equipo1: 'INDEPENDIENTE RAFAELA', equipo2: 'LIBERTAD FEMENINO' },
+      { categoria: 'U5', cancha: '4', hora: '12:30', equipo1: 'UNION FEMENINO', equipo2: 'INDEPENDIENTE ATALIVA' },
+      { categoria: 'U5', cancha: '4', hora: '13:00', equipo1: 'TIRO FEDERAL MOISES VILLE', equipo2: 'INDEPENDIENTE RAFAELA' },
+      { categoria: 'U5', cancha: '4', hora: '13:30', equipo1: 'INDEPENDIENTE ATALIVA', equipo2: 'DEPORTIVO TACURAL' },
+
+      { categoria: 'U5', cancha: '5', hora: '10:00', equipo1: 'UNION MASCULINO VERDE', equipo2: 'ATLETICO RAFAELA' },
+      { categoria: 'U5', cancha: '5', hora: '10:30', equipo1: 'UNION FEMENINO', equipo2: '9 DE JULIO RAFAELA' },
+      { categoria: 'U5', cancha: '5', hora: '11:00', equipo1: 'RACING S. C.', equipo2: 'ARGENTINO HUMBERTO' },
+      { categoria: 'U5', cancha: '5', hora: '11:30', equipo1: 'ATLETICO RAFAELA', equipo2: '9 DE JULIO RAFAELA' },
+      { categoria: 'U5', cancha: '5', hora: '12:00', equipo1: 'UNION MASCULINO BLANCO', equipo2: 'RACING S. C.' },
+      { categoria: 'U5', cancha: '5', hora: '12:30', equipo1: 'PEÑAROL RAFAELA', equipo2: 'RACING S. C.' },
+      { categoria: 'U5', cancha: '5', hora: '13:00', equipo1: 'ARGENTINO HUMBERTO', equipo2: 'UNION MASCULINO VERDE' },
+      { categoria: 'U5', cancha: '5', hora: '13:30', equipo1: 'UNION MASCULINO BLANCO', equipo2: 'BEN HUR RAFAELA' },
+
+      { categoria: 'U5', cancha: '6', hora: '10:00', equipo1: 'INDEPENDIENTE RAFAELA', equipo2: 'PEÑAROL RAFAELA' },
+      { categoria: 'U5', cancha: '6', hora: '10:30', equipo1: 'DEPORTIVO TACURAL', equipo2: 'QUILMES RAFAELA' },
+      { categoria: 'U5', cancha: '6', hora: '11:00', equipo1: 'PEÑAROL RAFAELA', equipo2: 'LIBERTAD MASCULINO' },
+      { categoria: 'U5', cancha: '6', hora: '11:30', equipo1: 'QUILMES RAFAELA', equipo2: 'UNION MASCULINO VERDE' },
+      { categoria: 'U5', cancha: '6', hora: '12:00', equipo1: 'DEPORTIVO TACURAL', equipo2: 'ARGENTINO HUMBERTO' },
+      { categoria: 'U5', cancha: '6', hora: '12:30', equipo1: 'QUILMES RAFAELA', equipo2: 'ATLETICO RAFAELA' },
+      { categoria: 'U5', cancha: '6', hora: '13:00', equipo1: 'UNION FEMENINO', equipo2: 'LIBERTAD FEMENINO' },
+      { categoria: 'U5', cancha: '6', hora: '13:30', equipo1: 'LIBERTAD MASCULINO', equipo2: '9 DE JULIO RAFAELA' },
+
+      { categoria: 'U7', cancha: '1', hora: '10:00', equipo1: 'LIBERTAD MASCULINO', equipo2: 'DEPORTIVO TACURAL' },
+      { categoria: 'U7', cancha: '1', hora: '10:30', equipo1: 'UNION MASCULINO BLANCO', equipo2: '9 DE JULIO RAFAELA' },
+      { categoria: 'U7', cancha: '1', hora: '11:00', equipo1: 'RACING S. C.', equipo2: 'INDEPENDIENTE ATALIVA' },
+      { categoria: 'U7', cancha: '1', hora: '11:30', equipo1: 'ATLETICO PILAR', equipo2: '9 DE JULIO RAFAELA' },
+      { categoria: 'U7', cancha: '1', hora: '12:00', equipo1: 'RACING S. C.', equipo2: 'UNION MASCULINO VERDE' },
+      { categoria: 'U7', cancha: '1', hora: '12:30', equipo1: 'INDEPENDIENTE ATALIVA', equipo2: 'UNION MASCULINO BLANCO' },
+      { categoria: 'U7', cancha: '1', hora: '13:00', equipo1: 'UNION FEMENINO', equipo2: 'DEPORTIVO TACURAL' },
+
+      { categoria: 'U7', cancha: '2', hora: '10:00', equipo1: 'UNION FEMENINO', equipo2: 'TIRO FEDERAL MOISES VILLE' },
+      { categoria: 'U7', cancha: '2', hora: '10:30', equipo1: 'INDEPENDIENTE RAFAELA', equipo2: 'UNION MASCULINO VERDE' },
+      { categoria: 'U7', cancha: '2', hora: '11:00', equipo1: 'ATLETICO RAFAELA', equipo2: 'UNION MASCULINO BLANCO' },
+      { categoria: 'U7', cancha: '2', hora: '11:30', equipo1: 'INDEPENDIENTE RAFAELA', equipo2: 'DEPORTIVO TACURAL' },
+      { categoria: 'U7', cancha: '2', hora: '12:00', equipo1: 'INDEPENDIENTE RAFAELA', equipo2: 'LIBERTAD MASCULINO' },
+      { categoria: 'U7', cancha: '2', hora: '12:30', equipo1: 'UNION MASCULINO VERDE', equipo2: 'TIRO FEDERAL MOISES VILLE' },
+      { categoria: 'U7', cancha: '2', hora: '13:00', equipo1: 'LIBERTAD FEMENINO', equipo2: 'UNION MASCULINO VERDE' },
+
+      { categoria: 'U7', cancha: '3', hora: '10:00', equipo1: 'LIBERTAD FEMENINO', equipo2: 'ATLETICO RAFAELA' },
+      { categoria: 'U7', cancha: '3', hora: '10:30', equipo1: 'ATLETICO PILAR', equipo2: 'UNION FEMENINO' },
+      { categoria: 'U7', cancha: '3', hora: '11:00', equipo1: 'TIRO FEDERAL MOISES VILLE', equipo2: 'LIBERTAD MASCULINO' },
+      { categoria: 'U7', cancha: '3', hora: '11:30', equipo1: 'LIBERTAD FEMENINO', equipo2: 'INDEPENDIENTE ATALIVA' },
+      { categoria: 'U7', cancha: '3', hora: '12:00', equipo1: 'ATLETICO RAFAELA', equipo2: 'ATLETICO PILAR' },
+      { categoria: 'U7', cancha: '3', hora: '12:30', equipo1: 'RACING S. C.', equipo2: '9 DE JULIO RAFAELA' }
+    ];
+
+    const categoryFilter = document.getElementById('categoryFilter');
+    const teamFilter = document.getElementById('teamFilter');
+    const matchesContainer = document.getElementById('matches');
+    const summary = document.getElementById('summary');
+
+    teams.forEach(team => {
+      const option = document.createElement('option');
+      option.value = team;
+      option.textContent = team;
+      teamFilter.appendChild(option);
+    });
+
+    function sortByTimeAndCourt(list) {
+      return [...list].sort((a, b) => {
+        if (a.hora !== b.hora) return a.hora.localeCompare(b.hora);
+        return Number(a.cancha) - Number(b.cancha);
+      });
+    }
+
+    function renderMatches() {
+      const selectedCategory = categoryFilter.value;
+      const selectedTeam = teamFilter.value;
+
+      const filtered = sortByTimeAndCourt(matches.filter(match => {
+        const categoryOk = !selectedCategory || match.categoria === selectedCategory;
+        const teamOk = !selectedTeam || match.equipo1 === selectedTeam || match.equipo2 === selectedTeam;
+        return categoryOk && teamOk;
+      }));
+
+      summary.textContent = `${filtered.length} partido${filtered.length === 1 ? '' : 's'} encontrado${filtered.length === 1 ? '' : 's'}`;
+
+      if (!filtered.length) {
+        matchesContainer.innerHTML = '<div class="empty">No hay partidos para ese filtro.</div>';
+        return;
+      }
+
+      matchesContainer.innerHTML = filtered.map(match => `
+        <article class="match-card">
+          <div class="match-top">
+            <div class="time">${match.hora}</div>
+            <div class="badge-row">
+              <span class="badge">Cancha ${match.cancha}</span>
+              <span class="badge">${match.categoria}</span>
+            </div>
+          </div>
+          <div class="teams">
+            <div class="team">${match.equipo1}</div>
+            <div class="vs">vs</div>
+            <div class="team">${match.equipo2}</div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    categoryFilter.addEventListener('change', renderMatches);
+    teamFilter.addEventListener('change', renderMatches);
+
+    renderMatches();
+  </script>
+</body>
+</html>
